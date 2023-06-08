@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+    <script>
+        const ISOK = 200 ; 
+
+        function display(id, jsObject)
+        {
+            document.getElementById("idInput").value = jsObject.pokemon[id].id ;
+            document.getElementById("numberInput").value = jsObject.pokemon[id].num ;
+            document.getElementById("nameInput").value = jsObject.pokemon[id].name ;
+            document.getElementById("heightInput").value = jsObject.pokemon[id].height ;
+            document.getElementById("weightInput").value = jsObject.pokemon[id].weight ;
+            document.getElementById("pokemonImg").src = jsObject.pokemon[id].img ; 
+        }
+
+        function handle(jsObject, option)
+        {
+            var id = document.getElementById("idInput").value - 1;
+            if(option === "Retrieve")
+            {
+                if(id <0 || id > jsObject.pokemon.length - 1) alert('No pokemon found') ;
+
+                else
+                    display(id, jsObject) ; 
+            }
+            else if(option === "Next Pokemon")
+            {
+                if(id == jsObject.pokemon.length - 1) id = -1 ;  
+                display(id + 1,jsObject) ; 
+            }
+            else
+            {
+                if(id == 0) id = jsObject.pokemon.length ; 
+                display(id - 1, jsObject) ; 
+            }
+        }
+
+        function getJsonASync(url,input)
+        {
+            var request = new XMLHttpRequest() ; 
+
+            request.onload = function()
+            {
+                if(request.status === ISOK)
+                {
+                    var response = request.responseText ; 
+                    var jsObject = JSON.parse(response) ; 
+                    handle(jsObject, input.value);
+                }
+        
+            };
+
+            request.open("GET",url , true) ; 
+            request.send() ; 
+        }
+
+        function getDataAsync(input){
+            var url = "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json" ; 
+            getJsonASync(url,input) ; 
+
+        }
+    </script>
+    <title>Document</title>
+</head>
+<body>
+    <div id = "container">
+        <label>Pokemon ID:</label>
+        
+        <input type = "text" id = "idInput" placeholder="Enter pokemon's ID and then push retrieve button">
+        
+        <label>Pokemon Number:</label>
+        
+        <input type = "text" id = "numberInput" >
+        
+        <label>Name:</label>
+        
+        <input type = "text" id = "nameInput" >
+        
+        <label>Height:</label>
+        
+        <input type = "text" id = "heightInput" >
+        
+        <label>Weight:</label>
+        
+        <input type = "text" id = "weightInput" >
+        
+        <div id="btnContainer">
+            <img src="" id = "pokemonImg">
+            <input onclick = "getDataAsync(this)" type = "button" id = "retrieveBtn" value = "Retrieve">
+        
+        
+            <input onclick = "getDataAsync(this)" type = "button" id = "nextBtn" value = "Next Pokemon">
+            
+            
+            <input onclick = "getDataAsync(this)" type = "button" id = "prevBtn" value = "Previous Pokemon">
+        </div>
+        
+    </div>
+</body>
+</html>
